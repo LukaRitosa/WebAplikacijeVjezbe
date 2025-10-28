@@ -1,5 +1,5 @@
 import express from 'express'
-let Port = 3000
+let port = 3000
 let app= express()
 
 let pizze=[
@@ -10,7 +10,7 @@ let pizze=[
     },
     {
         id: 2, 
-        naziv: "mjesana",
+        naziv: "mješana",
         cijena: 12
     },
     {
@@ -36,7 +36,7 @@ app.get('/', (req, res) =>{
 })
 
 app.get('/pizze', (req, res) =>{
-    res.json(pizze)
+    res.json.pizze
 })
 
 app.get('/pizze/:naziv', (req, res)=>{
@@ -46,13 +46,29 @@ app.get('/pizze/:naziv', (req, res)=>{
 })
 
 
-app.listen(PORT, (error)=>{
+app.listen(port, (error)=>{
     if(error){
         console.error('Ne radi startanje')
     }
     else{
-        console.error(`Posložitelj sluša na ${PORT}`)
+        console.error(`Posložitelj sluša na ${port}`)
     }
 })
 
 console.log(app)
+
+
+
+/*
+
+bitno za zapamtit
+
+
+find
+findIndex
+map, filter, reduce 
+splice, slice
+some, every
+
+
+*/
