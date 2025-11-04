@@ -78,6 +78,8 @@ router.post('/', (req, res)=>{
     if(krivi_kjucevi){
         return res.status(400).json({greska: 'Ne možete u ovom obliku stvoriti nekretninu'})
     }
+
+    
 })
 
 
