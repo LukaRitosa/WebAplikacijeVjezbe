@@ -75,14 +75,58 @@ router.post('/', (req, res)=>{
 
     const krivi_kjucevi=kljucevi_nekretnina.some(kljuc => !dozvoljeni_kljucevi.includes(kljuc))
     
-    if(krivi_kjucevi){
+    if(krivi_kjucevi || nova_nekretnina.broj_soba <0
+      || nova_nekretnina.cijena <0 || nova_nekretnina.povrsina <0
+      || isNaN(nova_nekretnina.broj_soba) || isNaN(nova_nekretnina.cijena)
+      || isNaN(nova_nekretnina.povrsina)){
         return res.status(400).json({greska: 'Ne možete u ovom obliku stvoriti nekretninu'})
     }
 
-    
+
+
+    let novi_id=nekretnine.at(-1)['id'] + 1
+
+    nekretnine.push({id: novi_id, ... nova_nekretnina})
+
+    return res.status(201).json(nekretnine)
+
 })
 
+router.put('/:id', (req, res)=>{
+  const id_nekretnina= req.params.id
+  const nova_nekretnina=req.body
 
+  nova_nekretnina.id=id_nekretnina
+
+  const index=nekretnine.findIndex(n => n.id == id_nekretnina)
+
+  if(index==-1){
+    return res.status(404).json({greska: 'Nije pronađena nekretnina koju pokušavate ažurirati'})
+  }
+
+  nekretnine[index]=nova_nekretnina
+
+  if(nova_nekretnina.broj_soba <0 || nova_nekretnina.cijena <0 
+    || nova_nekretnina.povrsina <0 || isNaN(nova_nekretnina.broj_soba) || isNaN(nova_nekretnina.cijena)
+    || isNaN(nova_nekretnina.povrsina)){
+      return res.status(400).json({greska: 'Neispravan oblik nekretnine'})
+    }
+
+  return res.status(200).json({nekretnine})
+})
+
+router.patch('/:id', (req, res)=>{
+  const id_nekretnina=req.params.id
+  const nova_nekretnina= req.body
+
+  const index=nekretnine.findIndex(i => i.id == id_nekretnina)
+
+  if(index == -1){
+    return res.status(404).json({greska: 'ne postoji nekretnina koju pokušavate ažurirati'})
+  }
+
+  
+})
 
 export default router
 
