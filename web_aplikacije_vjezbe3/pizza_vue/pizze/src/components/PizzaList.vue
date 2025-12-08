@@ -1,26 +1,40 @@
 <script setup>
-    // app/pizza-vue/src/components/PizzaList.vue
     import { ref, onMounted } from 'vue';
     import axios from 'axios';
+    import { addIcons } from 'oh-vue-icons';
+    import OrderFooter from './OrderFooter.vue';
+
+    // uvoz potrebnih ikona
+    import { GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, CoHotjar, GiMilkCarton, GiBellPepper, LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, GiHamShank } from 'oh-vue-icons/icons';
+
+    // registracija ikona koje ćemo koristiti
+    addIcons(GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, GiBellPepper, GiHamShank, LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, CoHotjar, GiMilkCarton);
+    
 
     const odabrana_pizza = ref(null); // reaktivna varijabla za pohranu naziva odabrane pizze
 
-    function odaberiPizzu(pizza_naziv) {
-        odabrana_pizza.value = pizza_naziv; // postavljanje naziva odabrane pizze
-        console.log('Odabrana pizza:', odabrana_pizza.value); // ispis u konzolu
+    function odaberiPizzu(pizza) {
+        odabrana_pizza.value = pizza; // pohranjujemo cijeli objekt pizze
+        console.log('Odabrana pizza:', pizza);
     }
 
-    const myPromise = new Promise((resolve, reject) => {
-        // asinhroni kod koji će na kraju pozvati resolve() ili reject() ovisno o ishodu
-        let success = true; // primjer uvjeta
-        if (success) {
-            resolve('Uspjeh!'); // poziva se ako je operacija uspješna
-        } else {
-            reject('Greška!'); // poziva se ako je došlo do greške
-        }
-    });
-
     const pizze = ref([]); // reaktivna varijabla za pohranu podataka o pizzama
+  
+    // mapa ikona sastojaka s kebab-case imenima
+    const ikoneSastojaka = {
+        rajčica: 'gi-tomato',
+        sir: 'gi-cheese-wedge',
+        gljive: 'gi-sliced-mushroom',
+        bosiljak: 'io-leaf-sharp',
+        paprika: 'gi-bell-pepper',
+        šunka: 'gi-ham-shank',
+        'feferoni ljuti': 'la-pepper-hot-solid',
+        tunjevina: 'gi-canned-fish',
+        'crveni luk': 'gi-garlic',
+        panceta: 'fa-bacon',
+        kulen: 'co-hotjar',
+        vrhnje: 'gi-milk-carton'
+    };
 
     onMounted(() => {
         axios
@@ -31,6 +45,14 @@
             .catch(error => {
                 console.error('Greška pri dohvaćanju podataka o pizzama:', error);
             });
+        
+        window.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                odabrana_pizza.value = null; // poništavamo odabir pizze
+            }
+        })
+
+        fetchPizze(); // pozivanje funkcije za dohvaćanje podataka o pizzama
     });
     console.log(pizze.value); 
 
@@ -43,34 +65,32 @@
             console.error('Greška pri dohvaćanju podataka o pizzama:', error);
         }
     }
-    // u ovom slučaju onMounted ne treba biti async zato što ne koristimo await direktno unutar njega
-    onMounted(() => {
-        fetchPizze(); // pozivanje funkcije za dohvaćanje podataka o pizzama
-    });
 </script>
 
 <template>
     <div class="mx-auto bg-linear-to-br min-h-screen p-8  bg-[url('/background.png')] bg-cover bg-center bg-no-repeat">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div v-for="pizza in pizze"
-    :key="pizza.id"
-    @click="odaberiPizzu(pizza.naziv)"
-    :class="[
-          'bg-inherit rounded-xl overflow-hidden cursor-pointer transition-all duration-300',
-          odabrana_pizza === pizza.naziv
-            ? 'ring-4 ring-orange-300 shadow-lg shadow-orange-300/50 scale-[1.02]'
-            : 'hover:scale-[1.01]',
-        ]">
-                <div class="w-full h-48 flex items-center justify-center bg-inherit">
-                    <img src="https://www.freeiconspng.com/uploads/pizza-png-1.png" alt="Pizza Image 3" class="w-full h-full object-contain" />
-                </div>
+        :key="pizza.id"
+        @click="odaberiPizzu(pizza)"
+        :class="[
+            'bg-inherit rounded-xl overflow-hidden cursor-pointer transition-all duration-300',
+            odabrana_pizza?.naziv === pizza.naziv
+                ? 'ring-4 ring-orange-300 shadow-lg shadow-orange-300/50 scale-[1.02]'
+                : 'hover:scale-[1.01]',
+            ]">
+                <div class="w-full h-48 flex items-center justify-center bg-inherit overflow-hidden rounded-xl">
+                <img :src="pizza.slika_url" :alt="pizza.naziv" class="w-full h-full object-cover" />
+            </div>
 
                 <div class="p-6">
                     <div class="flex items-center space-x-3 mb-4">
                         <h2 class="text-lg font-bold text-orange-500 tracking-wide">{{pizza.naziv}}</h2>
 
-                        <div class="flex space-x-2">
-                            <div v-for="sastojak in pizze.sastojci" :key="sastojak" class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-slate-50 font-semibold text-xs">{{ sastojak }}</div>
+                        <div v-for="sastojak in pizza.sastojci" :key="sastojak"
+                            class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-slate-50 font-semibold text-xs"
+                        >
+                            <v-icon :name="ikoneSastojaka[sastojak]" />
                         </div>
                     </div>
 
@@ -94,4 +114,7 @@
             </div>
         </div>
     </div>
+
+    <OrderFooter v-if="odabrana_pizza" :odabrana-pizza="odabrana_pizza" @close="odabrana_pizza = null" />
+
 </template>

@@ -7,6 +7,9 @@ const router = express.Router();
 // POST /narudzbe - Izrada nove narudžbe pizza
 router.post('/', (req, res) => {
     const { narucene_pizze, podaci_dostava } = req.body;
+    
+    console.log('Primljeni podaci narudžbe:', req.body)
+
     if (!narucene_pizze || narucene_pizze.length === 0) {
         return res.status(400).json({ message: 'Nisu specificirane naručene pizze.' });
     }
