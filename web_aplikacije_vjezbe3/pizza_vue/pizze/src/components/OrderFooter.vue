@@ -3,15 +3,15 @@
     import { computed } from 'vue';
     import axios from 'axios';
 
+    const statusUspijeh = ref("")
+    const statusError = ref("")
+
     async function posaljiNarudzbu() {
         try {
-            // alert ako je košarica prazna
-            if (narucene_pizze.value.length === 0) {
-                alert('Košarica je prazna! Molimo dodajte pizze prije narudžbe.');
-                return;
-            }
 
-            // hardkodirani podaci za dostavu
+            statusUspijeh.value = ""
+            statusError.value = ""
+
             const podaciZaDostavu = {
                 prezime: prezime.value,
                 adresa: adresa.value,
@@ -24,13 +24,13 @@
             });
 
             console.log('Narudžba uspješno poslana:', odgovor.data);
-            alert('Hvala! Vaša narudžba je uspješno poslana.');
+            statusUspijeh.value = odgovor.data.message;
 
             // Resetiraj narudžbu nakon slanja
             narucene_pizze.value = [];
         } catch (error) {
             console.error('Greška pri slanju narudžbe:', error);
-            alert('Došlo je do greške pri slanju narudžbe. Molimo pokušajte ponovno.');
+            statusError.value = error.response.data.message;
         }
     }
 
@@ -182,6 +182,14 @@
                     </button>
                 </li>
             </ul>
+        </div>
+
+        <div v-if="statusUspijeh" class="p-2 rounded bg-green-600 text-white text-sm">
+            {{ statusUspijeh }}
+        </div>
+
+        <div v-if="statusError" class="p-2 rounded bg-red-600 text-white text-sm">
+            {{ statusError }}
         </div>
 
         <div v-if="uredi"
