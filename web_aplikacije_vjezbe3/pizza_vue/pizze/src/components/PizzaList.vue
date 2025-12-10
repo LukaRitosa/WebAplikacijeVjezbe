@@ -3,6 +3,8 @@
     import axios from 'axios';
     import { addIcons } from 'oh-vue-icons';
     import OrderFooter from './OrderFooter.vue';
+    import Header from './Header.vue';
+    import { RouterLink } from 'vue-router'
 
     // uvoz potrebnih ikona
     import { GiTomato, GiCheeseWedge, GiSlicedMushroom, IoLeafSharp, CoHotjar, GiMilkCarton, GiBellPepper, LaPepperHotSolid, GiCannedFish, GiGarlic, FaBacon, GiHamShank } from 'oh-vue-icons/icons';
@@ -68,6 +70,7 @@
 </script>
 
 <template>
+    <Header/>
     <div class="mx-auto bg-linear-to-br min-h-screen p-8  bg-[url('/background.png')] bg-cover bg-center bg-no-repeat">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div v-for="pizza in pizze"
@@ -85,7 +88,10 @@
 
                 <div class="p-6">
                     <div class="flex items-center space-x-3 mb-4">
-                        <h2 class="text-lg font-bold text-orange-500 tracking-wide">{{pizza.naziv}}</h2>
+                        <RouterLink :to="`/${pizza.naziv}`" class="text-lg font-bold text-orange-500 tracking-wide hover:text-orange-300"
+                        @click.stop>
+                            {{pizza.naziv}}
+                        </RouterLink>
 
                         <div v-for="sastojak in pizza.sastojci" :key="sastojak"
                             class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-slate-50 font-semibold text-xs"

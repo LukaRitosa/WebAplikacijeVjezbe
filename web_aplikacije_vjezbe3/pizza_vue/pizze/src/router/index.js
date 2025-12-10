@@ -11,7 +11,7 @@ const router = createRouter({
         component: PizzaList
     },
     {
-        path: '/pizza/:naziv',
+        path: '/:naziv',
         name: 'Pizza',
         component: Pizza
     }
