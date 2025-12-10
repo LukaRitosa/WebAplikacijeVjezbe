@@ -25,6 +25,10 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 npm install
 ```
 
+```sh
+npm install tailwindcss @tailwindcss/vite
+```
+
 ### Compile and Hot-Reload for Development
 
 ```sh
@@ -35,4 +39,25 @@ npm run dev
 
 ```sh
 npm run build
+```
+
+# pizza-express
+
+```sh
+ cd pizza-express
+ npm init -y
+ npm install express
+```
+
+```sh
+npm install axios
+```
+
+
+```sh
+npm install cors
+```
+
+```sh
+npm install oh-vue-icons
 ```
