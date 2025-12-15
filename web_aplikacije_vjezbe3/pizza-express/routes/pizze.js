@@ -4,6 +4,7 @@ import express from 'express';
 import { pizze } from '../data/data.js'; // učitavanje dummy podataka
 const router = express.Router();
 
+
 // GET /pizze - Dohvaćanje svih pizza (npr. GET /pizze)
 router.get('/', (req, res) => {
     if (pizze.length === 0 || !pizze) {
