@@ -3,6 +3,7 @@ import pizzaRouter from './routes/pizze.js'
 import narudzbeRouter from './routes/narudzbe.js'
 import cors from 'cors'
 import { connectToDatabase } from './db.js'
+import { FindCursor } from 'mongodb';
 
 const corsOptions = {
     origin: 'http://localhost:5173'
@@ -11,6 +12,8 @@ const corsOptions = {
 const app = express();
 
 let db = await connectToDatabase();
+
+
 
 const PORT = 3000;
 app.use(express.json());
@@ -22,20 +25,13 @@ app.get('/', (req, res) => {
     res.send('Dobrodošli u Pizza Express poslužitelj!');
 });
 
-app.get('/pizze', async (req, res) => {
-    let pizze_collection = db.collection('pizze'); // referenca na kolekciju 'pizze'
-    let allPizze = await pizze_collection.find().toArray(); // pretvorba u Array
-    res.status(200).json(allPizze);
-});
+app.get('/mongo/pizze', async (req, res)=>{
+    let pizze_collection= db.collection('pizze')
+    let pizze = await pizze_collection.find().toArray()
+    res.status(200).json(pizze) 
+})
 
-app.get('/pizze/:naziv', async (req, res) => {
-    let pizze_collection = db.collection('pizze');
-    let naziv_param = req.params.naziv;
-    let pizza = await pizze_collection.find({ naziv: naziv_param }).toArray();
-    // ili
-    // let pizza = await pizze_collection.findOne({ naziv: naziv_param }); // samo 1 rezultat, ne koristimo metodu Iterator.toArray()
-    res.status(200).json(pizza);
-});
+
 
 app.listen(PORT, () => {
     console.log(`Pizza poslužitelj sluša na portu ${PORT}`);
