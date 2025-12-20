@@ -38,4 +38,3 @@ app.listen(PORT, () => {
 });
 
 
-// mongodb+srv://lukaritosa24_db_user:*aNJ3bAsJEsT2P#@fipuwacluster.kmzjhrm.mongodb.net/?appName=FIPUwaCLUSTER

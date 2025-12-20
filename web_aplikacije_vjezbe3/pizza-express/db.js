@@ -11,14 +11,10 @@ console.log(process.env.PASSWORD);
 
 console.log()
 
-//mongodb+srv://lukaritosa24_db_user:vu6isTDiN8HY8q0z@fipu-pizza-cluster.famrhxt.mongodb.net/?appName=FIPU-pizza-CLUSTER
 
-// const username = 'lukaritosa24_db_user'; // vaše Mongo korisničko ime
-// const password = 'vu6isTDiN8HY8q0z'; // vaša Mongo lozinka
 const cluster = 'FIPU-pizza-CLUSTER'; // naziv vašeg clustera
 
 
-// Pripazite! nakon lozinke, MongoDB će konkatenirati naziv vašeg clustera i random string (.cluster.mpyeq.mongodb.net)
 const mongoURI = `mongodb+srv://${username}:${password}@fipu-pizza-cluster.famrhxt.mongodb.net/?appName=${cluster}`;
 
 const db_name = process.env.MONGO_DB_NAME;
