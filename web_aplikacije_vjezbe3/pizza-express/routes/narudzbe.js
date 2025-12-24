@@ -49,9 +49,10 @@ let db = await connectToDatabase();
 
 router.post('/', async (req, res)=>{
     let narudzbe_collection = db.collection('narudzbe')
-    const nova_narudzba=req.body
+    let nova_narudzba=req.body
 
-    let obavezniKljucevi = ['podaci_dostava', 'ukupna_cijena', 'narucene_pizze']
+
+    let obavezniKljucevi = ['podaci_dostava', 'narucene_pizze']
 
     let obavezniKljuceviStavke = ['naziv', 'kolicina', 'velicina']
     
@@ -71,6 +72,14 @@ router.post('/', async (req, res)=>{
         return res.status(400).json({error: 'Nedostaju obavezni podaci za dostavu'})
     }
 
+    const telefon= nova_narudzba.podaci_dostava.telefon
+
+    const ispravanTelefon=(typeof telefon === 'string' && /^[0-9]+$/.test(telefon))
+
+    if(!ispravanTelefon){
+        return res.status(400).json({greska: 'Telefon neispravan'})
+    }
+
     if (!nova_narudzba.narucene_pizze.every(stavka => {
             return Number.isInteger(stavka.kolicina) && stavka.kolicina > 0 && ['mala', 'srednja', 'jumbo'].includes(stavka.velicina)
         })) {
@@ -84,6 +93,28 @@ router.post('/', async (req, res)=>{
     if(!nova_narudzba.narucene_pizze.every(stavka=> dostupne_pizze.some(pizza=> pizza.naziv==stavka.naziv))){
         return res.status(400).json({greska: 'Odabrali ste pizzu koje nema u ponudi'})
     }
+
+
+
+    const pizze= nova_narudzba.narucene_pizze
+
+
+    let uk_cij= 0.0
+
+    for(let i=0; i<pizze.length; i++){
+        let p= pizze[i]
+        let pizza= dostupne_pizze.find(pi=> pi.naziv==p.naziv)
+
+        let cijena= pizza.cijene[p.velicina]
+
+        
+
+        uk_cij+= cijena * p.kolicina
+
+    }
+
+    
+    nova_narudzba.ukupna_cijena= Number(uk_cij.toFixed(2))
 
     let result={}
     
