@@ -61,3 +61,25 @@ npm install cors
 ```sh
 npm install oh-vue-icons
 ```
+
+# Mongo spajanje
+
+Potrebno je stvoriti pizza_db projekt u mongo atlasu i FIPU-pizza-CLUSTER cluster.
+
+Kopirati podatke u .env u obliku:
+  MONGO_USERNAME=***
+  PASSWORD=***
+  MONGO_DB_NAME=pizza_db 
+
+```sh
+npm install mongodb
+```
+
+```sh
+npm install dotenv
+```
+
+zatim copy paste-at svoj mongo uri na db.js u obliku:
+  const mongoURI = `mongodb+srv://${username}:${password}@******/?appName=${cluster}`
+
+Potrebno je staviti .env u .gitignore zbog sigurnosti.
