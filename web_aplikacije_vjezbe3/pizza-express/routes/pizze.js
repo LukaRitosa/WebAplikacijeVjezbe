@@ -91,26 +91,21 @@ router.post('/', async (req, res)=>{
 
     let obavezniKljuceviCijene = ['mala', 'srednja', 'jumbo']
     
-    let dozvoljeniSastojci = ['rajčica', 'sir', 'gljive', 'bosiljak', 'paprika', 'šunka', 'feferoni ljuti', 'tunjevina', 'crveni luk', 'panceta', 'kulen', 'vrhnje']
 
 
     if (!obavezniKljucevi.every(kljuc => kljuc in nova_pizza)) {
         return res.status(400).json({ error: 'Nedostaju obavezni ključevi' });
     }
 
-    if (!nova_pizza.cijene.every(stavka => obavezniKljuceviCijene.every(kljuc => kljuc in stavka))) {
-        return res.status(400).json({ error: 'Nedostaju obavezni ključevi u stavci narudžbe' });
+    if (!obavezniKljuceviCijene.every(kljuc => kljuc in nova_pizza.cijene)){
+        return res.status(400).json({ error: 'Nedostaju obavezni ključevi u cijenama' });
     }
 
-    if (!nova_pizza.sastojci.every(sastojak => {
-            return typeof sastojak=='string' && dozvoljeniSastojci.includes(sastojak)
-        })) {
-        return res.status(400).json({ error: 'Neispravni sastojci' });
-    }
+
  
-    if( typeof nova_narudzba.sastojci.mala !== 'number' || nova_narudzba.sastojci.mala < 0 ||
-        typeof nova_narudzba.sastojci.velika !== 'number' || nova_narudzba.sastojci.srednja < 0 ||
-        typeof nova_narudzba.sastojci.jumbo !== 'number' || nova_narudzba.sastojci.jumbo < 0){
+    if( typeof nova_pizza.cijene.mala !== 'number' || nova_pizza.cijene.mala < 0 ||
+        typeof nova_pizza.cijene.srednja !== 'number' || nova_pizza.cijene.srednja < 0 ||
+        typeof nova_pizza.cijene.jumbo !== 'number' || nova_pizza.cijene.jumbo < 0){
             return res.status(400).json({error: 'Neispravne cijene'})
     }
 
