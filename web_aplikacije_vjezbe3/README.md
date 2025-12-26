@@ -67,9 +67,12 @@ npm install oh-vue-icons
 Potrebno je stvoriti pizza_db projekt u mongo atlasu i FIPU-pizza-CLUSTER cluster.
 
 Kopirati podatke u .env u obliku:
-  MONGO_USERNAME=***
-  PASSWORD=***
-  MONGO_DB_NAME=pizza_db 
+
+```sh
+MONGO_USERNAME=***
+PASSWORD=***
+MONGO_DB_NAME=pizza_db 
+```
 
 ```sh
 npm install mongodb
