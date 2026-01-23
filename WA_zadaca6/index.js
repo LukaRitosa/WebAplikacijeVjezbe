@@ -1,6 +1,6 @@
 import express from 'express'
-import korisniciRouter from './routes/korisnici.js'
-// index.js
+import moviesRouter from './routes/movies.js'
+import actorsRouter from './routes/actors.js'
 import { body, validationResult, query, param } from 'express-validator';
 
 let port = 3000
@@ -19,7 +19,9 @@ const requestLogger = (req, res, next) => {
 
 app.use(requestLogger);
 
-app.use('/korisnici', korisniciRouter)
+app.use('/movies', moviesRouter)
+
+app.use('/actors', actorsRouter)
 
 app.listen(port, (error)=>{
     if(error){

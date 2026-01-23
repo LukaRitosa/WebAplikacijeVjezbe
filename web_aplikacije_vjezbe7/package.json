@@ -1,5 +1,5 @@
 {
-  "name": "web_aplikacije_vjezbe6",
+  "name": "web_aplikacije_vjezbe7",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-validator": "^7.3.1"
   }
