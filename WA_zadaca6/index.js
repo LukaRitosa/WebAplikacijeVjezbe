@@ -10,14 +10,26 @@ app.use(express.json())
 
 
 const requestLogger = (req, res, next) => {
+    const server_naziv = 'movie-server';
     const date = new Date().toLocaleString();
     const method = req.method; // HTTP metoda
     const url = req.originalUrl; // URL zahtjeva
-    console.log(`[${date}] : ${method} ${url}`);
+    console.log(`[${server_naziv}] [${date}]  ${method} ${url}`);
     next();
 };
 
 app.use(requestLogger);
+
+const xssZastita = [
+    query('*').trim().escape(),
+
+    param('*').trim().escape(),
+
+    body('*').trim().escape()
+];
+
+app.use(xssZastita);
+
 
 app.use('/movies', moviesRouter)
 

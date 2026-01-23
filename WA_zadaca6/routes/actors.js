@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 
-router.get('/', [query('name').isAlpha().withMessage('name mora biti slovima') ,handelActorValidation], async (req, res) => {    
+router.get('/', [query('name').trim().isString().withMessage('name mora biti slovima') ,handelActorValidation], async (req, res) => {    
     const name = req.query.name
 
     let rez= glumci
