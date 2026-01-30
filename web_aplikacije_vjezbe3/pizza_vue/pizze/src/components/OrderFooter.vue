@@ -1,7 +1,10 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted  } from 'vue';
     import { computed } from 'vue';
     import axios from 'axios';
+
+
+    const imeKorisnika = ref('')
 
     const statusUspijeh = ref("")
     const statusError = ref("")
@@ -75,12 +78,17 @@
     const uredi=ref(false)
 
     function spremiAdresu() {
-        if (!temp_prezime.value || !temp_adresa.value || !temp_telefon.value) {
+        if ((!temp_prezime.value && imeKorisnika.value.length===0) || !temp_adresa.value || !temp_telefon.value) {
             alert("Molimo ispunite sva polja.");
             return;
         }
 
-        prezime.value = temp_prezime.value;
+        if(imeKorisnika.value.length==0){
+            prezime.value = temp_prezime.value;
+        }
+        else{
+            prezime.value = imeKorisnika.value;
+        }
         adresa.value = temp_adresa.value;
         telefon.value = temp_telefon.value;
 
@@ -90,6 +98,16 @@
     function ukloniStavku(index){
         narucene_pizze.value.splice(index, 1)
     }
+
+    onMounted(async () => {
+        try {
+            const res = await axios.get('http://localhost:3000/user/ja')
+            imeKorisnika.value = res.data.ime
+        } catch (err) {
+            console.log('Korisnik nije prijavljen')
+        }
+    })
+
 
 </script>
 
@@ -151,7 +169,7 @@
             >
                 Dodaj/uredi adresu
             </button>
-            <button v-if="!prezime.length==0 || !adresa.length==0 || !telefon.length==0" 
+            <button v-if="prezime && adresa && telefon" 
                 @click="posaljiNarudzbu"
                 class="bg-orange-500 text-white font-semibold px-4 py-2 rounded-xl shadow-md shadow-black/40 hover:bg-orange-600 transition-all tracking-wide cursor-pointer w-full sm:w-auto text-center"
             >
@@ -199,13 +217,17 @@
 
             <div class="flex flex-col gap-3">
 
-                <input
-                    v-model="temp_prezime"
-                    type="text"
-                    placeholder="Prezime"
-                    class="bg-slate-700 text-white px-3 py-2 rounded-lg border border-slate-600 focus:outline-none focus:border-orange-500"
-                />
-
+                <div v-if="imeKorisnika.length==0">
+                    <input
+                        v-model="temp_prezime"
+                        type="text"
+                        placeholder="Prezime"
+                        class="bg-slate-700 text-white px-3 py-2 rounded-lg border border-slate-600 focus:outline-none focus:border-orange-500"
+                    />
+                </div>
+                <div v-else class="bg-slate-700 text-white px-3 py-2 rounded-lg border border-slate-600 focus:outline-none focus:border-orange-500">
+                    {{ imeKorisnika }}
+                </div>
                 <input
                     v-model="temp_adresa"
                     type="text"

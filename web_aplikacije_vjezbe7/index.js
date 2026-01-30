@@ -1,6 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import bcrypt, { hash } from 'bcrypt';
+import crypto from 'crypto';
+import { hashPassword, checkPassword, generateJWT, verifyJWT } from './auth.js';
+import { users } from './data/users.js'
+import { objave } from './data/objave.js' 
+import { authMiddleware, pronadiKorisnika } from './middleware/middleware.js';
 
 const app = express();
 app.use(express.json());
@@ -8,79 +13,61 @@ app.use(cors());
 
 let PORT = 3000;
 
-const users = [
-    { id: 1, username: 'johnDoe', password: 'password' },
-    { id: 2, username: 'janeBB', password: 'password123' },
-    { id: 3, username: 'admin', password: 'super_secret_password' }
-];
 
 
 app.get('/', (req, res) => {
     res.send('Spremni za autentifikaciju!');
 });
 
-let plainPassword = 'lozinka123';
-let saltRounds = 10;
 
-bcrypt.hash(plainPassword, saltRounds, (err, hash) => {
-    if (err) {
-        console.error(`Došlo je do greške prilikom hashiranja lozinke: ${err}`);
-        return;
-    } else {
-        console.log(`Hashirana lozinka: ${hash}`);
-    }
-}); 
-
-app.post('/register', async (req, res)=>{
-
+app.post('/register', [pronadiKorisnika], async (req, res) => {
     const { username, password } = req.body;
 
-    try {
-        bcrypt.hash(plainPassword, saltRounds, (req, res)=>{
-            if(hash){
-                console.log('hash', hash)
-                let hashirana_lozinka= hash
-                users.push({id: 4, username: username, password: hashirana_lozinka})
-            }
-        });
-        console.log(`Hashirana lozinka: ${hash}`);
-        return res.status(201).json({ message: 'Korisnik uspješno registriran', user: novi_korisnik });
-    } catch (err) {
-        console.error(`Došlo je do greške prilikom hashiranja lozinke: ${err}`);
-    }
-})
-
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    let plainPassword = 'peroPeropero123'
-
-
-    const user = users.find(user => user.username === username);
-
-    if(!user){
-        response.status(404).json({greska: 'Korisnik ne postoji'})
+    if(req.user){
+        return res.status(400).json({poruka: 'korisnik već postoji'})
     }
 
-    let hashedPassword= user.password
+    let hashedPassword = await hashPassword(password, 10); 
 
-    bcrypt.compare(plainPassword, hashedPassword, (err, result) => {
-        if (err) {
-            console.error(`Došlo je do greške prilikom usporedbe _hash_ vrijednosti: ${err}`);
-            return;
-        }
+    users.push({ username, password: hashedPassword });
 
-        if (result) {
-            console.log('Lozinke se podudaraju!');
-        } else {
-            console.log('Lozinke se ne podudaraju!');
-        }
-    });
+    console.log(users);
 
-    if (user) {
-        res.send('Uspješno ste autentificirani!');
-    } else {
-        res.status(401).send('Neuspješna autentifikacija!');
+    res.status(200).send('Korisnik je uspješno registriran!');
+});
+
+
+
+
+app.post('/login', [pronadiKorisnika], async (req, res) => {
+    const { password } = req.body;
+
+
+    if (!req.user) {
+        return res.status(400).send('Greška prilikom prijave!');
     }
+
+    let tocna_lozinka = await checkPassword(password, req.user.password); 
+
+    let jwt_payload = { 
+        username: req.user.username 
+    }
+
+    let jwt_token= await generateJWT(jwt_payload)
+
+    if (tocna_lozinka) {
+        return res.status(200).json({poruka: 'Uspješna autenzifikacija', jwt_token: jwt_token });
+    }
+
+    return res.status(400).send('Greška prilikom prijave!');
+});
+
+
+
+app.get('/objave', [authMiddleware], async (req, res) => {
+    let userObjave= objave.filter(o=> o.autor===req.autorizirani_korisnik.username)
+
+    res.json(userObjave); 
 });
 
 

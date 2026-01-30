@@ -22,8 +22,42 @@
                 <div class="font-medium text-slate-200">Negrijeva 6</div>
                 <div class="text-[11px] text-slate-200">52100 Pula</div>
             </div>
+
+            <div v-if="!korisnik">
+                <RouterLink to="/registracija"
+                    class="mb-4 inline-block bg-orange-500 px-4 py-2 rounded-xl hover:bg-orange-600 text-white">
+                    Registracija
+                </RouterLink>
+
+                <RouterLink to="/prijava"
+                    class="mb-4 inline-block bg-orange-500 px-4 py-2 rounded-xl hover:bg-orange-600 text-white">
+                    Prijava
+                </RouterLink>
+            </div>
+            <div v-else class="flex items-center gap-4 text-slate-200">
+                <span class="font-semibold">👋 {{ korisnik }}</span>
+                <RouterLink to="/narudzbe"
+                    class="mb-4 inline-block bg-orange-500 px-4 py-2 rounded-xl hover:bg-orange-600 text-white">
+                    Vaše narudžbe
+                </RouterLink>
+            </div>
         </div>
     </header>
 </template>
 <script setup>
+    import { ref, onMounted } from 'vue'
+    import axios from 'axios'
+
+    const korisnik = ref(null)
+
+    async function ucitajKorisnika() {
+        try {
+            const res = await axios.get('http://localhost:3000/user/ja')
+            korisnik.value = res.data.ime
+        } catch (err) {
+            korisnik.value = null
+        }
+    }
+
+    onMounted(ucitajKorisnika)
 </script>

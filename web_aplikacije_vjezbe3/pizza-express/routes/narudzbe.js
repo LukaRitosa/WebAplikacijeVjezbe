@@ -5,6 +5,7 @@ import { narudzbe, pizze } from '../data/data.js'; // učitavanje dummy podataka
 import { connectToDatabase } from '../db.js'
 import { FindCursor } from 'mongodb';
 import { ObjectId } from 'mongodb';
+import { imeKorisnika } from '../middleware/middleware.js'
 
 const router = express.Router();
 
@@ -163,6 +164,17 @@ router.delete('/mongo/narudzbe/:naziv', async (req, res)=>{
     }
 })
 
+router.get('/', [imeKorisnika], async (req, res)=>{
+    try{
+        const narudzbe = await db.collection('narudzbe').find({
+            'podaci_dostava.prezime': req.user.ime
+        }).toArray()
 
+        res.json(narudzbe)
+    } catch(error){
+        console.error('desila se greška')
+        return res.status(500).json({greska: `desila se greška: ${error}`})
+    }
+})
 
     export default router;
